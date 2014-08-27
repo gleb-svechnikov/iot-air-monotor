@@ -27,9 +27,29 @@ var UserController = {
     },
 */
 	'add': function(req,res){
+		res.locals.flash = _.clone(req.session.flash);
 		res.view();
-	}
-
+		req.session.flash = {};
+	},
+	'create': function(req, res, next){
+		User.create(
+			req.params.all(), 
+			
+			function userCreated(err,user){
+			
+				if(err){
+					req.session.flash = {
+						err: err
+					}
+					
+					console.log(err);
+					return res.redirect('/user/add');
+				}
+				res.json(user);
+				req.session.flash = {};
+			}
+		)
+	},
 } 
 
 module.exports = UserController;

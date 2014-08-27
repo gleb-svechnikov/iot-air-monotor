@@ -6,25 +6,31 @@
 */
 
 module.exports = {
-
-  attributes: {
-  	name: {
-  		type: 'string',
-  		required: true
-  	},
-  	projects: {
-  		type: 'array'
-  	},
-  	email: {
-  		type: 'string',
-  		email: true,
-  		required: true,
-  		unique: true
-  	},
-  	password: {
-  		type: 'string'
-  	} 
-
-  }
+	schema: true,
+	attributes: {
+		name: {
+			type: 'string',
+			required: true
+		},
+		projects: {
+			type: 'string'
+		},
+		email: {
+			type: 'string',
+			email: true,
+			required: true,
+			unique: true
+		},
+		password: {
+			type: 'string'
+		},
+		clearFields: function(){
+			var obj = this.toObject();
+			delete obj.password;
+			delete obj._csrf;
+			return obj;
+		} 
+	
+	}
 };
 

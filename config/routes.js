@@ -30,9 +30,12 @@
 	'/': {
 		view: 'homepage'
   	},
-	'/users':{
-		view: 'users/index'
+/*
+	'/user/add':{
+		view: 'UserController',
+		action: 'add'
 	},
+*/
 
   // Custom routes here...
 
