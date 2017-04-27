@@ -1,0 +1,11 @@
+<body ng-app="demo">
+    <div ng-include="'http://ui.intermedia.net/Zenith/dist/icons/symbol/svg/sprite.svg'" style="display: none"></div>
+    <header class="topheader">
+        {{> Header}}
+    </header>
+    <main>
+        {{#if currentUser}}{{> addDialog}}{{/if}}
+        {{> editDialog value=prototypeInfo}}
+        {{> prototypesList}}
+    </main>
+</body>

@@ -1,0 +1,138 @@
+<main ng-controller="mainCtrl as ctrl">
+    <div class="page-notifications">
+        <z-notification is-active="ctrl.notifications.saveCanges" timeout="3000">Changes were saved</z-notification>
+    </div>
+    <h1>UI prototypes</h1>
+    <div class="page-content ml10 mt20">
+        <div class="" ng-if="$root.currentUser.username.length > 0 && ctrl.favorites.length > 0">
+            <h3 class="mb16">Favorites</h3>
+            <ul class="favorites-list prototypes-list mb24">
+                <li class="item f-row" ng-repeat="project in ctrl.favorites">
+                    <div class="item-name f-stretch">
+                        <a href="{{project.link}}" ng-class="{'muted':project.removed}">{{project.name}}</a>
+                        <button type="button"
+                                ng-click="ctrl.removeFavorite(project)"
+                                class="btn m-link ml8 favorite">
+                            <svg class="icon m-orange m-size-16 vab" z-icon="#star-16" z-tooltip="Remove from favorites"></svg>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+            <div class="f-row mb32">
+                <hr class="f-col-10 m0 m-dotted m-gray" />
+            </div>
+        </div>
+        <div class="mt24 mb24" ng-if="$root.currentUser.username.length > 0">
+            <button type="button" class="btn m-green" ng-click="ctrl.actionDialog(null,'add')">
+                <svg class="icon m-size-16 m-white vam" z-icon="#add-16"></svg>
+                &nbsp; Add prototype
+            </button>
+        </div>
+        <div class="f-row mb24">
+            <input type="search" placeholder="Search" class="f-col-6 m-h32" ng-model="ctrl.searchString" ng-change="ctrl.getSearchResults()" />
+            <span class="f-col ma ml32" ng-class="{'active-link': ctrl.pageState.deletedIsShown}" ng-if="$root.currentUser.username.length > 0">
+                <a href="" ng-if="!ctrl.pageState.deletedIsShown" class="ma" ng-click="ctrl.showDeleted()">Show deleted</a>
+                <a href="" ng-if="ctrl.pageState.deletedIsShown" class="ma" ng-click="ctrl.hideDeleted()">Hide deleted</a>
+            </span>
+        </div>
+        <h3 class="mb16 mt16" ng-if="$root.currentUser.username.length > 0 && ctrl.favorites.length > 0">All UI prototypes</h3>
+        <div class="m-gray" ng-if="ctrl.projectsTree.length == 0 && ctrl.searchString.length > 0">
+            Nothing found
+        </div>
+        <div class="m-gray tex-center" ng-if="(ctrl.projectsTree.length == 0 && ctrl.searchString.length == 0)">
+            <z:spinner size="48"></z:spinner>
+            <div class="mt8">Loading..</div>
+        </div>
+        <ul class="prototypes-list">
+            <li ng-repeat="project in ctrl.projectsTree | orderBy: 'hierarchy'"
+                ng-hide="ctrl.hideItem(project.removed)"
+                data-id="{{project._id}}"
+                class="item f-row">
+                <div class="item-name f-stretch" ng-style="{'margin-left': ctrl.getOrderMargin(project)}">
+                    <a ng-if="project.link" ng-href="{{project.link}}" ng-bind-html="project.name | highlight: ctrl.searchString" ng-class="{'m-gray' : project.removed, 'm-bold': ((project.sublinks.length>0 && project.parent==null) && !(project.sublinks.length == 1 && project.hasRemoved))}"></a>
+                    <span ng-if="!project.link" ng-bind-html="project.name | highlight: ctrl.searchString" ng-class="{'m-gray' : project.removed, 'm-bold': ((project.sublinks.length>0 && project.parent==null) && !(project.sublinks.length == 1 && project.hasRemoved))}"></span>
+                    <button type="button"
+                            ng-if="$root.currentUser.username.length > 0 && !project.removed"
+                            ng-click="ctrl.favoriteAction(project)"
+                            ng-hide="!project.$isFavorite"
+                            class="btn m-link ml8 favorite">
+                        <svg class="icon m-orange m-size-16 vab" ng-show="project.$isFavorite" z-icon="#star-16"></svg>
+                        <svg class="icon m-blue m-size-16 vab" ng-hide="project.$isFavorite" z-icon="#star-16"></svg>
+                    </button>
+                    <span class="muted item-breadcrumbs" ng-if="project.$parentsArr.length > 0"><span ng-repeat="parent in project.$parentsArr">{{parent}}<span ng-if="!$last">&nbsp;&gt;&nbsp;</span></span></span>
+                </div>
+
+                <span class="item-actions ma" ng-if="$root.currentUser.username.length > 0">
+                    <button type="button"
+                            ng-click="ctrl.actionDialog(project,'edit')"
+                            ng-if="!project.removed"
+                            class="btn m-link edit mr2">
+                        <svg class="icon m-size-16" z-icon="#pencil-16"></svg>
+                    </button>
+                    <button type="button"
+                            ng-click="ctrl.actionDialog(project,'sub')"
+                            ng-if="!project.removed"
+                            z-tooltip="Add sub-prototype"
+                            class="btn m-link edit mr4">
+                        <svg class="icon m-size-16" z-icon="#add-small-16"></svg>
+                    </button>
+                    <button type="button"
+                            ng-click="ctrl.restore(project)"
+                            z-tooltip="Restore"
+                            ng-show="project.removed"
+                            class="btn m-link restore">
+                        <svg class="icon m-size-16" z-icon="#restored-16"></svg>
+                    </button>
+                    <button type="button" ng-click="ctrl.remove(project)" ng-hide="project.removed" class="btn m-link remove">
+                        <svg class="icon m-size-16" z-icon="#trash-16"></svg>
+                    </button>
+                </span>
+
+            </li>
+        </ul>
+
+        <z:modal is-active="ctrl.showModal" title="{{ctrl.modalAction}} {{ctrl.sub}}prototype" on-close="ctrl.loadData()">
+            <form class="zen-form" name="ctrl.addForm" ng-submit="ctrl.submitDialog(ctrl.modalAction)" novalidate z-validate-form id="addForm">
+                <div class="control-group">
+                    <label class="control-label size-2">Name</label>
+                    <div class="controls size-6">
+                        <div class="validation-input">
+                            <input class="form-input f-col-6" type="text" name="name" ng-model="ctrl.newPrototype.name" required z-validate-field autofocus />
+                            <div class="validation-wrapper">
+                                <z:validation error="required" field="name">Name required</z:validation>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label size-2">Link</label>
+                    <div class="controls size-6">
+                        <div class="validation-input">
+                            <input class="form-input f-col-6" type="text" name="link" ng-model="ctrl.newPrototype.link" required z-validate-field />
+                            <div class="validation-wrapper">
+                                <z:validation error="required" field="link">Link required</z:validation>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group" ng-hide="ctrl.modalAction=='Add'&&ctrl.sub.length==0">
+                    <label class="control-label size-2">Parent</label>
+                    <div class="controls size-6">
+                        <z-select data="ctrl.filteredProjects" placeholder="Parent prototype name" ng-model="ctrl.tempParent" on-select="ctrl.setParentId()">
+                            <z-option value="{{project._id}}">
+                                <span class="fl">{{ item.name }}</span>
+                            </z-option>
+                            <z-selected>
+                                {{item.name}}
+                            </z-selected>
+                        </z-select>
+                    </div>
+                </div>
+                <input type="hidden" name="author" ng-model="ctrl.newPrototype.author">
+                <div class="submit-group mb8">
+                    <button type="submit" ng-disabled="ctrl.addFormNotChanged()" class="btn m-blue">{{ctrl.modalAction=='Add' ? 'Add prototype' : 'Save changes'}}</button>
+                </div>
+            </form>
+        </z:modal>
+    </div>
+</main>

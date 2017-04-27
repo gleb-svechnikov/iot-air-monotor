@@ -1,0 +1,33 @@
+<head>
+    <base href="/">
+    <link rel="icon" sizes="16x16 32x32" href="/favicon.ico">
+    <!-- <link rel="stylesheet" type="text/css" href="/styles/zenith.css" />-->
+    <link rel="stylesheet" type="text/css" href="http://ui.intermedia.net/Zenith/dist/styles/zenith.css" />
+
+    <script defer src="http://ui.intermedia.net/Zenith/dist/scripts/zenith.js"></script>
+    <script defer src="http://ui.intermedia.net/Zenith/dist/scripts/zenith.templates.js"></script>
+    <script defer src="http://ui.intermedia.net/Zenith/src/services/client-data-source.service.js"></script>
+    <title>UI prototypes</title>
+</head>
+
+
+<body ng-app="cms">
+    <style>
+        .highlighted {
+            background: yellow;
+        }
+    </style>
+    <header class="topheader">
+        <div class="clearfix">
+            <img src="/images/logo.svg" />
+            <menu>
+                <a href="/main" class="mr24" ui-sref="main" ui-sref-active="s-active">Main</a>
+                <a href="/log" ui-sref="log" ui-sref-active="s-active">Event log</a>
+            </menu>
+            <aside>
+                <login-buttons></login-buttons>
+            </aside>
+        </div>
+    </header>
+    <ui-view></ui-view>
+</body>

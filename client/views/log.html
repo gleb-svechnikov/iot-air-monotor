@@ -1,0 +1,56 @@
+<main ng-controller="mainCtrl as ctrl">
+  <h1>Event log</h1>
+  <div class="ml10 mt20 table-wrap">
+    <table class="table">
+      <thead class="table-head">
+        <tr>
+            <th></th>
+            <th>Who</th>
+            <th>Action</th>
+            <th>Prototype</th>
+            <th>Parent</th>
+            <th class="text-right">When</th>
+        </tr>
+      </thead>
+      <tbody class="table-body">
+        <tr ng-repeat="log in ctrl.logs.currentPage">
+          <td class="pr0 vam">
+            <svg class="icon m-size-16 m-red vat" z-icon="#trash-16" ng-show="log.action == 'removed'"></svg>
+            <svg class="icon m-size-16 m-blue vat" z-icon="#restored-16" ng-show="log.action == 'restored'"></svg>
+            <svg class="icon m-size-16 m-blue vat" z-icon="#pencil-16" ng-show="log.action == 'updated'"></svg>
+            <svg class="icon m-size-16 m-green vat" z-icon="#add-small-16" ng-show="log.action == 'added'"></svg>
+            <svg class="icon m-size-16 m-blue vat" z-icon="#chevron-forward-16" ng-show="log.action == 'moved'"></svg>
+          </td>
+          <td>{{ctrl.getAuthor(log)}}</td>
+          <td>{{log.action}}</td>
+          <td><a href="{{project.link}}" ng-attr-id="{{log.id}}">{{log.name}}</a></td>
+          <td>{{ctrl.getParent(log)}}</td>
+          <td class="text-right">{{log.date | date : 'medium'}}</td>
+        </tr>
+      </tbody>
+        <tfoot class="table-footer" ng-hide="ctrl.logs.data.length == 0">
+            <tr>
+                <td colspan="6">
+                    <div class="table-control-wrap">
+                        <div class="table-control fr" >
+                            <z-pagination total="ctrl.logs.total" start="ctrl.logs.start" limit="ctrl.logs.limit"></z-pagination>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+        <tfoot class="table-no-result" ng-show="ctrl.logs.data.length == 0">
+            <tr>
+                <td colspan="6">
+                    <div class="muted text-center">
+                        No logs
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+      <div>
+          
+      </div>
+  </div>
+</main>
